@@ -18,7 +18,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class RouteFragment extends Fragment {
     RecyclerView recyclerView;
@@ -67,11 +69,12 @@ public class RouteFragment extends Fragment {
         RouteData routeData = gson.fromJson(response, RouteData.class);
         Data data = routeData.data;
         List<RouteInfo> routeInfo = data.routeInfo;
+        List<MyRouteInfo> myRouteInfo = new ArrayList<>();
         for (int i = 0; i < routeInfo.size(); i++) {
             RouteInfo station = routeInfo.get(i);
-            Log.d("mylog", station.staName + "--" + station.staCode);
+            myRouteInfo.add(new MyRouteInfo(station));
         }
-        RouteAdapter adapter = new RouteAdapter(routeInfo);
+        RouteAdapter adapter = new RouteAdapter(myRouteInfo);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
     }

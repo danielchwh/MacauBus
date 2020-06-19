@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ContentsViewHolder> {
-    private List<RouteInfo> routeInfo;
+    private List<MyRouteInfo> routeInfo;
 
-    public RouteAdapter(List<RouteInfo> routeInfo) {
+    public RouteAdapter(List<MyRouteInfo> routeInfo) {
         this.routeInfo = routeInfo;
     }
 
@@ -29,15 +29,26 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ContentsView
 
     @Override
     public void onBindViewHolder(@NonNull ContentsViewHolder holder, int position) {
-        RouteInfo station = routeInfo.get(position);
+        MyRouteInfo station = routeInfo.get(position);
         holder.stationName.setText(station.staName);
         holder.stationCode.setText(station.staCode);
-        if (station.busInfo == null) {
+        if (station.busAtStation == null) {
             holder.busIcon1.setVisibility(View.INVISIBLE);
             holder.busPlate1.setVisibility(View.INVISIBLE);
+        } else {
+            holder.busIcon1.setVisibility(View.VISIBLE);
+            holder.busPlate1.setVisibility(View.VISIBLE);
+            holder.busPlate1.setText(station.busAtStation);
+        }
+        if (station.busOnRoad == null) {
             holder.busIcon2.setVisibility(View.GONE);
             holder.busPlate2.setVisibility(View.GONE);
             holder.drivingCard.setVisibility(View.GONE);
+        } else {
+            holder.busIcon2.setVisibility(View.VISIBLE);
+            holder.busPlate2.setVisibility(View.VISIBLE);
+            holder.drivingCard.setVisibility(View.VISIBLE);
+            holder.busPlate2.setText(station.busOnRoad);
         }
     }
 
