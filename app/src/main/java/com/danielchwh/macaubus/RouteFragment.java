@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -185,6 +186,10 @@ public class RouteFragment extends Fragment {
             myRouteInfo.get(i).refresh(routeInfo.get(i).busInfo);
         }
         adapter.notifyDataSetChanged();
-        Snackbar.make(requireView(), "已刷新", Snackbar.LENGTH_SHORT).show();
+        try {
+            Snackbar.make(requireView(), "已刷新", Snackbar.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
