@@ -1,12 +1,16 @@
 package com.danielchwh.macaubus;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -24,8 +30,10 @@ import java.util.List;
 
 public class RouteFragment extends Fragment {
     RecyclerView recyclerView;
-    int route;
-    private static final int REFRESH_INTERVAL = 3000;
+    FloatingActionButton floatingActionButton;
+    RouteAdapter adapter;
+    String route;
+    private static final int REFRESH_INTERVAL = 5000;
     Handler refreshHandler;
     Runnable refreshRunnable;
     List<MyRouteInfo> myRouteInfo = new ArrayList<>();
@@ -41,20 +49,18 @@ public class RouteFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_route, container, false);
         recyclerView = view.findViewById(R.id.recyclerView_Route);
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        route = 73;
+        floatingActionButton = view.findViewById(R.id.floatingActionButton_Route);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        route = getArguments().getString("route");
         initialize();
+        return view;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        refreshHandler.removeCallbacks(refreshRunnable);
+        if (refreshHandler != null && refreshRunnable != null)
+            refreshHandler.removeCallbacks(refreshRunnable);
     }
 
     @Override
@@ -62,6 +68,22 @@ public class RouteFragment extends Fragment {
         super.onResume();
         if (refreshRunnable != null)
             refreshRunnable.run();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Parcelable recyclerState = recyclerView.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable("scrollState", recyclerState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            Parcelable recyclerState = savedInstanceState.getParcelable("scrollState");
+            recyclerView.getLayoutManager().onRestoreInstanceState(recyclerState);
+        }
     }
 
     private void initialize() {
@@ -88,13 +110,17 @@ public class RouteFragment extends Fragment {
 
     private void initializeMyRouteInfo(String response) {
         Gson gson = new Gson();
-        List<RouteInfo> routeInfo = gson.fromJson(response, RouteData.class).data.routeInfo;
+        Data data = gson.fromJson(response, RouteData.class).data;
+        List<RouteInfo> routeInfo = data.routeInfo;
+        if (data.direction < 2)
+            floatingActionButton.hide();
+        if (routeInfo == null)
+            return;
         for (int i = 0; i < routeInfo.size(); i++) {
             RouteInfo station = routeInfo.get(i);
             myRouteInfo.add(new MyRouteInfo(station));
         }
-        RouteAdapter adapter = new RouteAdapter(myRouteInfo);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        adapter = new RouteAdapter(myRouteInfo);
         recyclerView.setAdapter(adapter);
         initializeRefresh();
     }
@@ -139,8 +165,7 @@ public class RouteFragment extends Fragment {
         for (int i = 0; i < routeInfo.size(); i++) {
             myRouteInfo.get(i).refresh(routeInfo.get(i).busInfo);
         }
-        RouteAdapter adapter = new RouteAdapter(myRouteInfo);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        Snackbar.make(requireView(), "已刷新", Snackbar.LENGTH_SHORT).show();
     }
 }
