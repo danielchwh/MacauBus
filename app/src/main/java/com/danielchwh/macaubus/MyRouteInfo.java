@@ -1,5 +1,6 @@
 package com.danielchwh.macaubus;
 
+import java.util.List;
 import java.util.Random;
 
 public class MyRouteInfo {
@@ -11,11 +12,27 @@ public class MyRouteInfo {
     public MyRouteInfo(RouteInfo routeInfo) {
         staCode = routeInfo.staCode;
         staName = routeInfo.staName;
-        if (new Random().nextInt(2) == 0) {
-            busAtStation = "TT1234";
+    }
+
+    public void refresh(List<BusInfo> busInfo) {
+        if (busInfo == null) {
+            busAtStation = null;
+            busOnRoad = null;
+            return;
         }
-        if (new Random().nextInt(2) == 0) {
-            busOnRoad = "TT1234";
+        busAtStation = "";
+        busOnRoad = "";
+        for (int i = 0; i < busInfo.size(); i++) {
+            if (busInfo.get(i).status == 1)
+                busAtStation += busInfo.get(i).busPlate + "\n";
+            else
+                busOnRoad += busInfo.get(i).busPlate + "\n";
         }
+        busAtStation = busAtStation.trim();
+        busOnRoad = busOnRoad.trim();
+        if (busAtStation.equals(""))
+            busAtStation = null;
+        if (busOnRoad.equals(""))
+            busOnRoad = null;
     }
 }

@@ -1,6 +1,7 @@
 package com.danielchwh.macaubus;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +21,14 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class RouteFragment extends Fragment {
     RecyclerView recyclerView;
+    int route;
+    private static final int REFRESH_INTERVAL = 3000;
+    Handler refreshHandler;
+    Runnable refreshRunnable;
+    List<MyRouteInfo> myRouteInfo = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,8 +47,25 @@ public class RouteFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        route = 73;
+        initialize();
+    }
 
-        String url = "https://bis.dsat.gov.mo:37812/macauweb/getRouteData.html?action=sd&routeName=73&dir=0&lang=zh-tw";
+    @Override
+    public void onPause() {
+        super.onPause();
+        refreshHandler.removeCallbacks(refreshRunnable);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (refreshRunnable != null)
+            refreshRunnable.run();
+    }
+
+    private void initialize() {
+        String url = "https://bis.dsat.gov.mo:37812/macauweb/getRouteData.html?action=sd&routeName=" + route + "&dir=0&lang=zh-tw";
         RequestQueue queue = Volley.newRequestQueue(requireContext());
         StringRequest request = new StringRequest(
                 StringRequest.Method.GET,
@@ -51,7 +73,7 @@ public class RouteFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        initStation(response);
+                        initializeMyRouteInfo(response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -64,15 +86,58 @@ public class RouteFragment extends Fragment {
         queue.add(request);
     }
 
-    private void initStation(String response) {
+    private void initializeMyRouteInfo(String response) {
         Gson gson = new Gson();
-        RouteData routeData = gson.fromJson(response, RouteData.class);
-        Data data = routeData.data;
-        List<RouteInfo> routeInfo = data.routeInfo;
-        List<MyRouteInfo> myRouteInfo = new ArrayList<>();
+        List<RouteInfo> routeInfo = gson.fromJson(response, RouteData.class).data.routeInfo;
         for (int i = 0; i < routeInfo.size(); i++) {
             RouteInfo station = routeInfo.get(i);
             myRouteInfo.add(new MyRouteInfo(station));
+        }
+        RouteAdapter adapter = new RouteAdapter(myRouteInfo);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setAdapter(adapter);
+        initializeRefresh();
+    }
+
+    private void initializeRefresh() {
+        refreshHandler = new Handler();
+        refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                refresh();
+                refreshHandler.postDelayed(refreshRunnable, REFRESH_INTERVAL);
+            }
+        };
+        refreshRunnable.run();
+    }
+
+    private void refresh() {
+        String url = "https://bis.dsat.gov.mo:37812/macauweb/routestation/bus?action=dy&routeName=" + route + "&dir=0&lang=zh-tw";
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        StringRequest request = new StringRequest(
+                StringRequest.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        refreshMyRouteInfo(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        );
+        queue.add(request);
+    }
+
+    private void refreshMyRouteInfo(String response) {
+        Gson gson = new Gson();
+        List<RouteInfo> routeInfo = gson.fromJson(response, RouteData.class).data.routeInfo;
+        for (int i = 0; i < routeInfo.size(); i++) {
+            myRouteInfo.get(i).refresh(routeInfo.get(i).busInfo);
         }
         RouteAdapter adapter = new RouteAdapter(myRouteInfo);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
