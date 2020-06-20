@@ -120,7 +120,10 @@ public class RouteFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        failureMsg.setVisibility(View.VISIBLE);
+                        if (error.toString().contains("thread interrupted"))
+                            initialize();
+                        else
+                            failureMsg.setVisibility(View.VISIBLE);
                     }
                 }
         );
