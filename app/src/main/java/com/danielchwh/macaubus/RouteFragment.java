@@ -113,7 +113,7 @@ public class RouteFragment extends Fragment {
         Data data = gson.fromJson(response, RouteData.class).data;
         List<RouteInfo> routeInfo = data.routeInfo;
         if (data.direction < 2)
-            floatingActionButton.hide();
+            floatingActionButton.show();
         if (routeInfo == null)
             return;
         for (int i = 0; i < routeInfo.size(); i++) {
