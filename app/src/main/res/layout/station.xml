@@ -27,6 +27,7 @@
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/stationCard"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/stationCard"
@@ -39,6 +40,7 @@
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/busIcon1"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/busIcon1"
         tools:text="MX3622" />
@@ -50,6 +52,7 @@
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/stationCard"
@@ -62,6 +65,7 @@
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/busIcon2"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/busIcon2"
         tools:text="MX3622" />
@@ -143,7 +147,29 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toBottomOf="@+id/stationCard"
+        app:layout_constraintEnd_toStartOf="@+id/stationCard"
+        app:layout_constraintStart_toEndOf="@+id/busPlate1"
+        app:layout_constraintTop_toTopOf="@+id/stationCard" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toBottomOf="@+id/drivingCard"
+        app:layout_constraintEnd_toStartOf="@+id/drivingCard"
+        app:layout_constraintStart_toEndOf="@+id/busPlate2"
+        app:layout_constraintTop_toTopOf="@+id/drivingCard" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
