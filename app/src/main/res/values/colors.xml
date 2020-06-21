@@ -3,4 +3,5 @@
     <color name="colorPrimary">#F1B322</color>
     <color name="colorPrimaryDark">#D5990F</color>
     <color name="colorAccent">#F1B322</color>
+    <color name="cardColor">?android:attr/colorBackground</color>
 </resources>
