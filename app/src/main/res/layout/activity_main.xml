@@ -7,11 +7,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton_Main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:backgroundTint="@color/cardColor"
+        app:srcCompat="@drawable/ic_baseline_compare_arrows_24" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_Main"
 
-        android:layout_height="192dp"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="240dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar_Main"
@@ -19,6 +30,7 @@
             android:layout_height="match_parent"
 
             app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleGravity="center"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar_Main">
 
@@ -26,7 +38,8 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar_Main"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"></androidx.appcompat.widget.Toolbar>
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"></androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 

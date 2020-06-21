@@ -12,14 +12,18 @@ public class MyRouteInfo {
     public MyRouteInfo(RouteInfo routeInfo) {
         staCode = routeInfo.staCode;
         staName = routeInfo.staName;
+        busAtStation = "";
+        busOnRoad = "";
     }
 
-    public void refresh(List<BusInfo> busInfo) {
+    public boolean refresh(List<BusInfo> busInfo) {
         if (busInfo == null) {
             busAtStation = null;
             busOnRoad = null;
-            return;
+            return false;
         }
+        String preBusAtStation = busAtStation;
+        String preBusOnRoad = busOnRoad;
         busAtStation = "";
         busOnRoad = "";
         for (int i = 0; i < busInfo.size(); i++) {
@@ -30,9 +34,8 @@ public class MyRouteInfo {
         }
         busAtStation = busAtStation.trim();
         busOnRoad = busOnRoad.trim();
-        if (busAtStation.equals(""))
-            busAtStation = null;
-        if (busOnRoad.equals(""))
-            busOnRoad = null;
+        if (!busAtStation.equals(preBusAtStation) || !busOnRoad.equals(preBusOnRoad))
+            return true;
+        return false;
     }
 }

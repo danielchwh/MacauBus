@@ -33,13 +33,13 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ContentsView
         MyRouteInfo station = routeInfo.get(position);
         holder.stationName.setText(station.staName);
         holder.stationCode.setText(station.staCode);
-        if (station.busAtStation == null) {
+        if (station.busAtStation.equals("")) {
             holder.busLayout1.setVisibility(View.INVISIBLE);
         } else {
             holder.busLayout1.setVisibility(View.VISIBLE);
             holder.busPlate1.setText(station.busAtStation);
         }
-        if (station.busOnRoad == null) {
+        if (station.busOnRoad.equals("")) {
             holder.busLayout2.setVisibility(View.GONE);
             holder.drivingCard.setVisibility(View.GONE);
         } else {

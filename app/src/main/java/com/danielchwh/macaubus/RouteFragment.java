@@ -7,17 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -53,8 +52,8 @@ public class RouteFragment extends Fragment {
         route = getArguments().getString("route");
         ((CollapsingToolbarLayout) requireActivity().findViewById(R.id.collapsingToolbar_Main))
                 .setTitle("路線 " + route);
+        floatingActionButton = requireActivity().findViewById(R.id.floatingActionButton_Main);
         recyclerView = view.findViewById(R.id.recyclerView_Route);
-        floatingActionButton = view.findViewById(R.id.floatingActionButton_Route);
         failureMsg = view.findViewById(R.id.failureMsg_Route);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         queue = Volley.newRequestQueue(requireContext());
@@ -90,6 +89,7 @@ public class RouteFragment extends Fragment {
         super.onDestroy();
         if (queue != null)
             queue.cancelAll(this);
+        floatingActionButton.hide();
     }
 
     @Override
@@ -188,11 +188,11 @@ public class RouteFragment extends Fragment {
         Gson gson = new Gson();
         List<RouteInfo> routeInfo = gson.fromJson(response, RouteData.class).data.routeInfo;
         for (int i = 0; i < routeInfo.size(); i++) {
-            myRouteInfo.get(i).refresh(routeInfo.get(i).busInfo);
+            if (myRouteInfo.get(i).refresh(routeInfo.get(i).busInfo))
+                adapter.notifyItemChanged(i);
         }
-        adapter.notifyDataSetChanged();
         try {
-            Snackbar.make(requireView(), "已刷新", Snackbar.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity(), "已刷新", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
