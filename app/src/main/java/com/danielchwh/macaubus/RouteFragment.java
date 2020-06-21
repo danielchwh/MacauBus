@@ -49,13 +49,13 @@ public class RouteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_route, container, false);
+        route = getArguments().getString("route");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("路線 " + route);
         recyclerView = view.findViewById(R.id.recyclerView_Route);
         floatingActionButton = view.findViewById(R.id.floatingActionButton_Route);
         failureMsg = view.findViewById(R.id.failureMsg_Route);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         queue = Volley.newRequestQueue(requireContext());
-        route = getArguments().getString("route");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("路線 " + route);
         return view;
     }
 
