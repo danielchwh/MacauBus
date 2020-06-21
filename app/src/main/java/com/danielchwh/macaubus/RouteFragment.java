@@ -91,21 +91,22 @@ public class RouteFragment extends Fragment {
         floatingActionButton.hide();
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Parcelable recyclerState = recyclerView.getLayoutManager().onSaveInstanceState();
-        outState.putParcelable("scrollState", recyclerState);
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null) {
-            Parcelable recyclerState = savedInstanceState.getParcelable("scrollState");
-            recyclerView.getLayoutManager().onRestoreInstanceState(recyclerState);
-        }
-    }
+//    // SavedState seems not working in collapsing layout
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        Parcelable recyclerState = recyclerView.getLayoutManager().onSaveInstanceState();
+//        outState.putParcelable("scrollState", recyclerState);
+//    }
+//
+//    @Override
+//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+//        super.onViewStateRestored(savedInstanceState);
+//        if (savedInstanceState != null) {
+//            Parcelable recyclerState = savedInstanceState.getParcelable("scrollState");
+//            recyclerView.getLayoutManager().onRestoreInstanceState(recyclerState);
+//        }
+//    }
 
     private void initialize() {
         String url = "https://bis.dsat.gov.mo:37812/macauweb/getRouteData.html?action=sd&routeName=" + route + "&dir=0&lang=zh-tw";
