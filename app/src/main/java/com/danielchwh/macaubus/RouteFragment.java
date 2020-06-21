@@ -22,20 +22,19 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RouteFragment extends Fragment {
+    private static final int REFRESH_INTERVAL = 5000;
     RecyclerView recyclerView;
     FloatingActionButton floatingActionButton;
     TextView failureMsg;
     RequestQueue queue;
     RouteAdapter adapter;
     String route;
-    private static final int REFRESH_INTERVAL = 5000;
     Handler refreshHandler;
     Runnable refreshRunnable;
     List<MyRouteInfo> myRouteInfo = new ArrayList<>();

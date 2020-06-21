@@ -1,7 +1,6 @@
 package com.danielchwh.macaubus;
 
 import java.util.List;
-import java.util.Random;
 
 public class MyRouteInfo {
     public String staCode;
@@ -34,8 +33,6 @@ public class MyRouteInfo {
         }
         busAtStation = busAtStation.trim();
         busOnRoad = busOnRoad.trim();
-        if (!busAtStation.equals(preBusAtStation) || !busOnRoad.equals(preBusOnRoad))
-            return true;
-        return false;
+        return !busAtStation.equals(preBusAtStation) || !busOnRoad.equals(preBusOnRoad);
     }
 }

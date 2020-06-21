@@ -11,7 +11,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-        <item name="collapsedTitleTextAppearance">@style/TextAppearance.Test.CollapsingToolbar</item>
+        <item name="collapsedTitleTextAppearance">@style/TextAppearance.Test.CollapsingToolbar
+        </item>
         <item name="expandedTitleTextAppearance">@style/TextAppearance.Test.CollapsingToolbar</item>
     </style>
 
