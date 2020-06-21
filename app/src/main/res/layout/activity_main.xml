@@ -22,7 +22,7 @@
         android:id="@+id/appbar_Main"
 
         android:layout_width="match_parent"
-        android:layout_height="240dp">
+        android:layout_height="192dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar_Main"
@@ -30,7 +30,6 @@
             android:layout_height="match_parent"
 
             app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleGravity="center"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar_Main">
 
