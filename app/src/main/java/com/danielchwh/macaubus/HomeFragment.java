@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+
 public class HomeFragment extends Fragment {
 
     @Override
@@ -26,7 +28,8 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         Button button = view.findViewById(R.id.button_Home);
         final EditText editText = view.findViewById(R.id.editText_Home);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("澳門巴士");
+        ((CollapsingToolbarLayout) requireActivity().findViewById(R.id.collapsingToolbar_Main))
+                .setTitle("澳門巴士");
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

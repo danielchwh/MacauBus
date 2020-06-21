@@ -7,4 +7,20 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.CollapsingToolBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="collapsedTitleTextAppearance">@style/TextAppearance.Test.CollapsingToolbar</item>
+        <item name="expandedTitleTextAppearance">@style/TextAppearance.Test.CollapsingToolbar</item>
+    </style>
+
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@android:color/white</item>
+    </style>
+
+    <style name="TextAppearance.Test.CollapsingToolbar" parent="">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
 </resources>

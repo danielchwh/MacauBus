@@ -21,6 +21,7 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -50,7 +51,8 @@ public class RouteFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_route, container, false);
         route = getArguments().getString("route");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("路線 " + route);
+        ((CollapsingToolbarLayout) requireActivity().findViewById(R.id.collapsingToolbar_Main))
+                .setTitle("路線 " + route);
         recyclerView = view.findViewById(R.id.recyclerView_Route);
         floatingActionButton = view.findViewById(R.id.floatingActionButton_Route);
         failureMsg = view.findViewById(R.id.failureMsg_Route);
