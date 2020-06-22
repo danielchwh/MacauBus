@@ -30,7 +30,6 @@ import java.util.List;
 public class RouteFragment extends Fragment {
     private static final int REFRESH_INTERVAL = 5000;
     RecyclerView recyclerView;
-    FloatingActionButton notifyButton;
     TextView failureMsg;
     RequestQueue queue;
     RouteAdapter adapter;
@@ -51,7 +50,6 @@ public class RouteFragment extends Fragment {
         route = getArguments().getString("route");
         ((CollapsingToolbarLayout) requireActivity().findViewById(R.id.collapsingToolbar_Main))
                 .setTitle(route + "號車");
-        notifyButton = requireActivity().findViewById(R.id.notifyButton_Main);
         recyclerView = view.findViewById(R.id.recyclerView_Route);
         failureMsg = view.findViewById(R.id.failureMsg_Route);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -88,7 +86,6 @@ public class RouteFragment extends Fragment {
         super.onDestroy();
         if (queue != null)
             queue.cancelAll(this);
-        notifyButton.hide();
     }
 
     private void initialize() {
@@ -173,15 +170,6 @@ public class RouteFragment extends Fragment {
         for (int i = 0; i < routeInfo.size(); i++) {
             if (myRouteInfo.get(i).refresh(routeInfo.get(i).busInfo))
                 adapter.notifyItemChanged(i);
-        }
-        try {
-            WorkManager workManager = WorkManager.getInstance(requireContext());
-            List<WorkInfo> workInfo = workManager.getWorkInfosForUniqueWork("busNotification").get();
-            WorkInfo.State state = workInfo.get(0).getState();
-            if (state == WorkInfo.State.SUCCEEDED)
-                notifyButton.hide();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

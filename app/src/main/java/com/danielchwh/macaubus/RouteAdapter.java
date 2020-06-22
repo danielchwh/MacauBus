@@ -23,7 +23,6 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ContentsView
     private List<MyRouteInfo> routeInfo;
     private String route;
     private WorkManager workManager;
-    private FloatingActionButton notifyButton;
 
     public RouteAdapter(String route, List<MyRouteInfo> routeInfo) {
         this.route = route;
@@ -36,13 +35,12 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ContentsView
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View itemView = layoutInflater.inflate(R.layout.station, parent, false);
         workManager = WorkManager.getInstance(parent.getContext());
-        notifyButton = parent.getRootView().findViewById(R.id.notifyButton_Main);
         return new ContentsViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ContentsViewHolder holder, final int position) {
-        MyRouteInfo station = routeInfo.get(position);
+        final MyRouteInfo station = routeInfo.get(position);
         holder.stationName.setText(station.staName);
         holder.stationCode.setText(station.staCode);
         if (station.busAtStation.equals("")) {
@@ -65,8 +63,23 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ContentsView
                 if (position == 0) {
                     // This is the first station
                     Toast.makeText(holder.itemView.getContext(), "這是起點站,無法設定報站通告", Toast.LENGTH_SHORT).show();
+                } else if (!routeInfo.get(position).busAtStation.equals("")) {
+                    // Bus is already at station
+                    Toast.makeText(holder.itemView.getContext(), "巴士已在車站,無法設定報站通告", Toast.LENGTH_SHORT).show();
+                } else if (!routeInfo.get(position - 1).busOnRoad.equals("")) {
+                    // Wait for bus arise
+                    androidx.work.Data data = new Data.Builder()
+                            .putString("route", route)
+                            .putInt("position", position)
+                            .build();
+                    OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(CheckBusAtStation.class)
+                            .addTag("busNotification")
+                            .setInputData(data)
+                            .build();
+                    workManager.enqueueUniqueWork("busNotification", ExistingWorkPolicy.REPLACE, workRequest);
+                    Toast.makeText(holder.itemView.getContext(), "已設定報站通告", Toast.LENGTH_SHORT).show();
                 } else {
-                    // No the the first station
+                    // Wait for bus coming
                     androidx.work.Data data = new Data.Builder()
                             .putString("route", route)
                             .putInt("position", position - 1)
@@ -76,7 +89,6 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ContentsView
                             .setInputData(data)
                             .build();
                     workManager.enqueueUniqueWork("busNotification", ExistingWorkPolicy.REPLACE, workRequest);
-                    notifyButton.show();
                     Toast.makeText(holder.itemView.getContext(), "已設定報站通告", Toast.LENGTH_SHORT).show();
                 }
             }

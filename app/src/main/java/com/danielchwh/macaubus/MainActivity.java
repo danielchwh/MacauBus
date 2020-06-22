@@ -6,6 +6,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -13,6 +15,7 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.List;
 
@@ -36,28 +39,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 workManager.cancelAllWorkByTag("busNotification");
-                notifyButton.hide();
                 Toast.makeText(getApplicationContext(), "已取消報站通告", Toast.LENGTH_SHORT).show();
             }
         });
+
+        workManager.getWorkInfosForUniqueWorkLiveData("busNotification")
+                .observe(this, new Observer<List<WorkInfo>>() {
+                    @Override
+                    public void onChanged(List<WorkInfo> workInfo) {
+                        WorkInfo.State state = workInfo.get(0).getState();
+                        if (state == WorkInfo.State.ENQUEUED || state == WorkInfo.State.RUNNING)
+                            notifyButton.show();
+                        else
+                            notifyButton.hide();
+                    }
+                });
     }
 
     @Override
     public boolean onSupportNavigateUp() {
         navController.navigateUp();
         return super.onSupportNavigateUp();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        try {
-            List<WorkInfo> workInfo = workManager.getWorkInfosForUniqueWork("busNotification").get();
-            WorkInfo.State state = workInfo.get(0).getState();
-            if (state == WorkInfo.State.ENQUEUED || state == WorkInfo.State.RUNNING)
-                notifyButton.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
