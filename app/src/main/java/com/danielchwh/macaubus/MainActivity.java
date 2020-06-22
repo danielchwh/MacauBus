@@ -1,5 +1,7 @@
 package com.danielchwh.macaubus;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -39,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 workManager.cancelAllWorkByTag("busNotification");
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancel(0);
                 Toast.makeText(getApplicationContext(), "已取消報站通告", Toast.LENGTH_SHORT).show();
             }
         });

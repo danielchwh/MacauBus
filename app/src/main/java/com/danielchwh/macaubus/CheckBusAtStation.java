@@ -1,15 +1,19 @@
 package com.danielchwh.macaubus;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.os.Build;
 import android.os.SystemClock;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
+import androidx.work.ForegroundInfo;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
@@ -41,6 +45,7 @@ public class CheckBusAtStation extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        setForegroundAsync(createForegroundInfo());
         String route = workerParams.getInputData().getString("route");
         int position = workerParams.getInputData().getInt("position", 0);
         String url = "https://bis.dsat.gov.mo:37812/macauweb/routestation/bus?action=dy&routeName=" + route + "&dir=0&lang=zh-tw";
@@ -76,6 +81,20 @@ public class CheckBusAtStation extends Worker {
         }
     }
 
+    private ForegroundInfo createForegroundInfo() {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel("foregroundService", "Foreground Service", NotificationManager.IMPORTANCE_MIN);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this.getApplicationContext(), "foregroundService")
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText("巴士報站服務")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setOngoing(true);
+        return new ForegroundInfo(0, notificationBuilder.build());
+    }
+
     private void continuous(String route, int position) {
         WorkManager workManager = WorkManager.getInstance(context);
         androidx.work.Data data = new Data.Builder()
@@ -101,5 +120,6 @@ public class CheckBusAtStation extends Worker {
                 .setContentText(route + NOTIFICATION_MSG)
                 .setSmallIcon(R.drawable.ic_launcher_foreground);
         notificationManager.notify((int) SystemClock.uptimeMillis(), notificationBuilder.build());
+        notificationManager.cancel(0);
     }
 }
