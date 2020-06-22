@@ -2,18 +2,18 @@ package com.danielchwh.macaubus;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -30,7 +30,7 @@ import java.util.List;
 public class RouteFragment extends Fragment {
     private static final int REFRESH_INTERVAL = 5000;
     RecyclerView recyclerView;
-    FloatingActionButton floatingActionButton;
+    FloatingActionButton notifyButton;
     TextView failureMsg;
     RequestQueue queue;
     RouteAdapter adapter;
@@ -50,8 +50,8 @@ public class RouteFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_route, container, false);
         route = getArguments().getString("route");
         ((CollapsingToolbarLayout) requireActivity().findViewById(R.id.collapsingToolbar_Main))
-                .setTitle("路線 " + route);
-        floatingActionButton = requireActivity().findViewById(R.id.floatingActionButton_Main);
+                .setTitle(route + "號車");
+        notifyButton = requireActivity().findViewById(R.id.notifyButton_Main);
         recyclerView = view.findViewById(R.id.recyclerView_Route);
         failureMsg = view.findViewById(R.id.failureMsg_Route);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -88,25 +88,8 @@ public class RouteFragment extends Fragment {
         super.onDestroy();
         if (queue != null)
             queue.cancelAll(this);
-        floatingActionButton.hide();
+        notifyButton.hide();
     }
-
-//    // SavedState seems not working in collapsing layout
-//    @Override
-//    public void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        Parcelable recyclerState = recyclerView.getLayoutManager().onSaveInstanceState();
-//        outState.putParcelable("scrollState", recyclerState);
-//    }
-//
-//    @Override
-//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-//        super.onViewStateRestored(savedInstanceState);
-//        if (savedInstanceState != null) {
-//            Parcelable recyclerState = savedInstanceState.getParcelable("scrollState");
-//            recyclerView.getLayoutManager().onRestoreInstanceState(recyclerState);
-//        }
-//    }
 
     private void initialize() {
         String url = "https://bis.dsat.gov.mo:37812/macauweb/getRouteData.html?action=sd&routeName=" + route + "&dir=0&lang=zh-tw";
@@ -137,16 +120,16 @@ public class RouteFragment extends Fragment {
         Data data = gson.fromJson(response, RouteData.class).data;
         List<RouteInfo> routeInfo = data.routeInfo;
         if (data.direction < 2)
-            floatingActionButton.show();
-        if (routeInfo == null) {
-            failureMsg.setVisibility(View.VISIBLE);
-            return;
-        }
+            // todo two direction
+            if (routeInfo == null) {
+                failureMsg.setVisibility(View.VISIBLE);
+                return;
+            }
         for (int i = 0; i < routeInfo.size(); i++) {
             RouteInfo station = routeInfo.get(i);
             myRouteInfo.add(new MyRouteInfo(station));
         }
-        adapter = new RouteAdapter(myRouteInfo);
+        adapter = new RouteAdapter(route, myRouteInfo);
         recyclerView.setAdapter(adapter);
         initializeRefresh();
     }
@@ -192,7 +175,11 @@ public class RouteFragment extends Fragment {
                 adapter.notifyItemChanged(i);
         }
         try {
-            Toast.makeText(requireActivity(), "已刷新", Toast.LENGTH_SHORT).show();
+            WorkManager workManager = WorkManager.getInstance(requireContext());
+            List<WorkInfo> workInfo = workManager.getWorkInfosForUniqueWork("busNotification").get();
+            WorkInfo.State state = workInfo.get(0).getState();
+            if (state == WorkInfo.State.SUCCEEDED)
+                notifyButton.hide();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -107,6 +107,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="4dp"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
         app:cardBackgroundColor="@color/cardColor"
         app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toTopOf="@+id/drivingCard"
