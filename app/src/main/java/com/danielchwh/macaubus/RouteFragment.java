@@ -54,7 +54,7 @@ public class RouteFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_route, container, false);
         route = getArguments().getString("route");
         ((CollapsingToolbarLayout) requireActivity().findViewById(R.id.collapsingToolbar_Main))
-                .setTitle(route + "號車");
+                .setTitle(route + "號巴士");
         switchButton = requireActivity().findViewById(R.id.switchButton_Main);
         switchButton.setOnClickListener(new View.OnClickListener() {
             @Override
