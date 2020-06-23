@@ -45,11 +45,13 @@ public class MainActivity extends AppCompatActivity {
                 .observe(this, new Observer<List<WorkInfo>>() {
                     @Override
                     public void onChanged(List<WorkInfo> workInfo) {
-                        WorkInfo.State state = workInfo.get(0).getState();
-                        if (state == WorkInfo.State.ENQUEUED || state == WorkInfo.State.RUNNING)
-                            notifyButton.show();
-                        else
-                            notifyButton.hide();
+                        if (workInfo.size() >= 1) {
+                            WorkInfo.State state = workInfo.get(0).getState();
+                            if (state == WorkInfo.State.ENQUEUED || state == WorkInfo.State.RUNNING)
+                                notifyButton.show();
+                            else
+                                notifyButton.hide();
+                        }
                     }
                 });
     }
