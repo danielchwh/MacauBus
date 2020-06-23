@@ -20,10 +20,12 @@ import java.util.List;
 public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ContentsViewHolder> {
     private List<MyRouteInfo> routeInfo;
     private String route;
+    private int direction;
     private WorkManager workManager;
 
-    public RouteAdapter(String route, List<MyRouteInfo> routeInfo) {
+    public RouteAdapter(String route, int direction, List<MyRouteInfo> routeInfo) {
         this.route = route;
+        this.direction = direction;
         this.routeInfo = routeInfo;
     }
 
@@ -68,6 +70,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ContentsView
                     // Wait for bus arise
                     androidx.work.Data data = new Data.Builder()
                             .putString("route", route)
+                            .putInt("direction", direction)
                             .putInt("position", position)
                             .build();
                     OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(CheckBusAtStation.class)
@@ -80,6 +83,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ContentsView
                     // Wait for bus coming
                     androidx.work.Data data = new Data.Builder()
                             .putString("route", route)
+                            .putInt("direction", direction)
                             .putInt("position", position - 1)
                             .build();
                     OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(CheckBusOnRoad.class)

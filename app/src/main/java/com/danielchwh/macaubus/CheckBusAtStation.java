@@ -42,8 +42,9 @@ public class CheckBusAtStation extends Worker {
     @Override
     public Result doWork() {
         String route = workerParams.getInputData().getString("route");
+        int direction = workerParams.getInputData().getInt("direction", 0);
         int position = workerParams.getInputData().getInt("position", 0);
-        String url = "https://bis.dsat.gov.mo:37812/macauweb/routestation/bus?action=dy&routeName=" + route + "&dir=0&lang=zh-tw";
+        String url = "https://bis.dsat.gov.mo:37812/macauweb/routestation/bus?action=dy&routeName=" + route + "&dir=" + direction + "&lang=zh-tw";
         RequestFuture<String> future = RequestFuture.newFuture();
         StringRequest request = new StringRequest(StringRequest.Method.GET, url, future, future);
         queue.add(request);
@@ -55,7 +56,7 @@ public class CheckBusAtStation extends Worker {
             List<BusInfo> busInfo = routeInfo.get(position).busInfo;
             if (busInfo == null) {
                 // No bus exist
-                continuous(route, position);
+                continuous(route, direction, position);
                 return Result.success();
             }
             for (int i = 0; i < busInfo.size(); i++) {
@@ -66,20 +67,21 @@ public class CheckBusAtStation extends Worker {
                 }
             }
             // All buses are at previous station
-            continuous(route, position);
+            continuous(route, direction, position);
             return Result.success();
         } catch (Exception e) {
             // Fail to access api
             e.printStackTrace();
-            continuous(route, position);
+            continuous(route, direction, position);
             return Result.success();
         }
     }
 
-    private void continuous(String route, int position) {
+    private void continuous(String route, int direction, int position) {
         WorkManager workManager = WorkManager.getInstance(context);
         androidx.work.Data data = new Data.Builder()
                 .putString("route", route)
+                .putInt("direction", direction)
                 .putInt("position", position)
                 .build();
         OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(CheckBusAtStation.class)
