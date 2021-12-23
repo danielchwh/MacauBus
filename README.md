@@ -6,3 +6,15 @@
 * Min Sdk Version: 19
 * Target Sdk Version: 29
 * Programming Lanuage: Java
+
+<img src="./screenshot/Screenshot_20211223-111608.jpg" width="400"><br/>
+<em>Home screen</em>
+
+<img src="./screenshot/Screenshot_20211223-111729.jpg" width="400"><br/>
+<em>Query bus route</em>
+
+<img src="./screenshot/Screenshot_20211223-111901.jpg" width="400"><br/>
+<em>Set notification</em>
+
+<img src="./screenshot/Screenshot_20211223-112016.jpg" width="400"><br/>
+<em>Receive notification</em>
